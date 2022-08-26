@@ -1,0 +1,80 @@
+---
+title: "Pacotes_Meteorologicos"
+author: "Camila"
+date: '2022-08-19'
+output: html_document
+---
+
+```{r INSTALANDO PACOTES}
+install.packages("rNOMADS")
+install.packages("rdwd")
+install.packages("weathercan")
+install.packages("darksky")
+install.packages("weatherData")
+install.packages("RNCEP")
+install.packages("rwunderground")
+install.packages("riem")
+install.packages("SkyWiseDataTransferR")
+```
+```{r BAIXANDO BIBLIOTECAS}
+library("rNOMADS")
+library("rdwd")
+library("darksky")
+library("RNCEP")
+library("rwunderground")
+library("riem")
+library("weathercan") # não instalou
+library("weatherData") # não instalou
+library("SkyWiseDataTransferR") # não instalou
+```
+```{r rNOMADS}
+help("rNOMADS")
+ls("package:rNOMADS")
+```
+```{r rdwd, documentação: https://github.com/brry/rdwd}
+help("rdwd")
+ls("package:rdwd")
+
+# selecionando um dataset
+endereco <- selectDWD("Potsdam", res = "daily", var = "precipitation", per = "recent")
+
+# baixando o dataset
+folder <- dataDWD(endereco, read = FALSE)  # deu erro (The following folder does not exist:  '')
+```
+```{r darksky, documentacao: https://github.com/hrbrmstr/darksky}
+# requere tidyverse
+install.packages("tidyverse")
+library("tidyverse")
+
+help("darksky")
+ls("darksky") # a lista de comandos não funciona com esse pacote
+
+now <- get_current_forecast(43.2672, -70.8617) # pede para inserir API key
+darksky_api_key() # precisa criar um arquivo .Renviron
+```
+```{r RNCEP, documentacao: https://github.com/cran/RNCEP}
+help("RNCEP")
+ls("package:RNCEP")
+
+# Função NCEP.gather() -nesse caso pegamos a temperatura numa pressão específica
+airtemp_press <- NCEP.gather(variable = "air", level=850,
+    months.minmax=c(9,10), years.minmax=c(1996,1997),
+    lat.southnorth=c(50,55), lon.westeast=c(5,10),
+    reanalysis2 = FALSE, return.units = TRUE)
+
+View(airtemp_press)  # visualizando o dado importado
+mode(airtemp_press)   # entendendo o dado importado (numeric)
+class(airtemp_press)  # entendendo o dado importado (array)
+```
+```{r rwunderground, documentacao: https://github.com/ALShum/rwunderground}
+help("rwunderground") # não encontra nenhum item
+ls("rwunderground")   # não encontra nenhum item
+
+
+```
+```{r riem, documentacao: https://github.com/ropensci/riem}
+help("riem")
+ls("riem")
+```
+
+
