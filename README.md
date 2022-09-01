@@ -5,4 +5,4 @@ Este repositório possui o intuito de servir como uma espécie de dicionário ou
 
 Nele é possível verificar sobre os pacotes: documentação, a fonte dos dados, estrutura e principais funções dos pacotes, exemplos práticos.
 
-Este repositório foi criado como parte das atividades do Projeto de Extensão Universitária em Ciências Climáticas e Ambientais do Laboratório de Meteorologia da UENF, coordenado pela professora Eliane.
+Este repositório foi criado como parte das atividades do Projeto de Extensão Universitária em Ciências Climáticas e Ambientais do Laboratório de Meteorologia da UENF.
