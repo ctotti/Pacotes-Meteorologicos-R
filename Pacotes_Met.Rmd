@@ -5,6 +5,14 @@ date: '2022-08-19'
 output: html_document
 ---
 
+## Sobre
+
+Este documento possui a finalidade de servir como uma espécie de dicionário ou guia introdutório para alguns dos pacotes disponíveis no R voltados para processamento de dados meteorológicos.
+
+### Instalação e importação dos pacotes
+
+1.  Instalação
+
 ```{r INSTALANDO PACOTES}
 install.packages("rNOMADS")
 install.packages("rdwd")
@@ -16,6 +24,9 @@ install.packages("rwunderground")
 install.packages("riem")
 install.packages("SkyWiseDataTransferR")
 ```
+
+2.  Importação
+
 ```{r BAIXANDO BIBLIOTECAS}
 library("rNOMADS")
 library("rdwd")
@@ -27,10 +38,43 @@ library("weathercan") # não instalou
 library("weatherData") # não instalou
 library("SkyWiseDataTransferR") # não instalou
 ```
+
+### Pacote rNOMADS
+
+#### Intro ao rNOMADS
+
+O pacote `rNOMADS` é uma interface destinada ao download automático de dados de previsão do tempo do National Oceanic and Atmospheric Administration's Operational Model Archive and Distribution System (NOMADS) no R.
+
+> O pacote permite fazer isso de 2 formas:
+>
+> > 1.  Lendo dados ascii diretamente do servidor usando o sistema DODS-GrAD
+>
+> > 2.  Fazendo o download de arquivos binários no formato GRIB1 ou GRIB2
+
+> O recurso `grib` do `rNOMADS` usa uma série externa de rotinas chamadas `wgrib2` para ler os dados do modelo operacional. Obtenha `wgrib2` em: <http://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/>.
+
+> O pacote também tentará chamar outra rotina externa chamada `wgrib` se o usuário desejar ler arquivos GRIB1. Obtenha `wgrib` em <http://www.cpc.ncep.noaa.gov/products/wesley/wgrib.html>.
+
 ```{r rNOMADS}
 help("rNOMADS")
 ls("package:rNOMADS")
 ```
+
+#### Funções do rNOMADS
+
+O `rNOMADS` possui um total de 22 funções, porém as principais são: `GetDODSDates`, `GetDODSModelRuns`, `DODSGrabs`.
+
+1. `GetDODSDates` verifica o servidor de dados do GrADS para ver quais datas e subconjuntos de modelos estão disponíveis para o modelo especificado pelo argumento `abbrev`. 
+
+A estrutura do `GetDODSDates`é a seguinte: `GetDODSDates(abbrev, request.sleep=1)`.
+
+```{r Funções rNOMADS}
+Get
+
+```
+
+### Pacote rdwd
+
 ```{r rdwd, documentação: https://github.com/brry/rdwd}
 help("rdwd")
 ls("package:rdwd")
@@ -41,6 +85,9 @@ endereco <- selectDWD("Potsdam", res = "daily", var = "precipitation", per = "re
 # baixando o dataset
 folder <- dataDWD(endereco, read = FALSE)  # deu erro (The following folder does not exist:  '')
 ```
+
+### Pacote darksky
+
 ```{r darksky, documentacao: https://github.com/hrbrmstr/darksky}
 # requere tidyverse
 install.packages("tidyverse")
@@ -52,6 +99,9 @@ ls("darksky") # a lista de comandos não funciona com esse pacote
 now <- get_current_forecast(43.2672, -70.8617) # pede para inserir API key
 darksky_api_key() # precisa criar um arquivo .Renviron
 ```
+
+### Pacote RNCEP
+
 ```{r RNCEP, documentacao: https://github.com/cran/RNCEP}
 help("RNCEP")
 ls("package:RNCEP")
@@ -66,15 +116,19 @@ View(airtemp_press)  # visualizando o dado importado
 mode(airtemp_press)   # entendendo o dado importado (numeric)
 class(airtemp_press)  # entendendo o dado importado (array)
 ```
+
+### Pacote rwunderground
+
 ```{r rwunderground, documentacao: https://github.com/ALShum/rwunderground}
 help("rwunderground") # não encontra nenhum item
 ls("rwunderground")   # não encontra nenhum item
 
 
 ```
+
+### Pacote riem
+
 ```{r riem, documentacao: https://github.com/ropensci/riem}
 help("riem")
 ls("riem")
 ```
-
-
