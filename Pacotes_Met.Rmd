@@ -64,7 +64,7 @@ ls("package:rNOMADS")
 
 O `rNOMADS` possui um total de 22 funções, porém as principais são: `GetDODSDates`, `GetDODSModelRuns`, `DODSGrabs`.
 
-1. `GetDODSDates` verifica o servidor de dados do GrADS para ver quais datas e subconjuntos de modelos estão disponíveis para o modelo especificado pelo argumento `abbrev`. 
+1.  `GetDODSDates` verifica o servidor de dados do GrADS para ver quais datas e subconjuntos de modelos estão disponíveis para o modelo especificado pelo argumento `abbrev`.
 
 A estrutura do `GetDODSDates`é a seguinte: `GetDODSDates(abbrev, request.sleep=1)`.
 
