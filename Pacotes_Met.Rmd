@@ -17,7 +17,6 @@ Este documento possui a finalidade de servir como uma espécie de dicionário ou
 install.packages("rNOMADS")
 install.packages("rdwd")
 install.packages("weathercan")
-install.packages("darksky")
 install.packages("weatherData")
 install.packages("RNCEP")
 install.packages("rwunderground")
@@ -30,7 +29,6 @@ install.packages("SkyWiseDataTransferR")
 ```{r BAIXANDO BIBLIOTECAS}
 library("rNOMADS")
 library("rdwd")
-library("darksky")
 library("RNCEP")
 library("rwunderground")
 library("riem")
@@ -43,7 +41,7 @@ library("SkyWiseDataTransferR") # não instalou
 
 #### Intro ao rNOMADS
 
-O pacote `rNOMADS` é uma interface destinada ao download automático de dados de previsão do tempo do National Oceanic and Atmospheric Administration's Operational Model Archive and Distribution System (NOMADS) no R.
+O pacote `rNOMADS` é uma interface destinada ao download automático de dados de previsão do tempo do *National Oceanic and Atmospheric Administration's Operational Model Archive and Distribution System* (NOMADS) no R.
 
 > O pacote permite fazer isso de 2 formas:
 >
@@ -95,14 +93,20 @@ GetDODSModelRuns()
 
 #### Intro ao rdwd
 
-O pacote `rdwd` foi criado com o intuito de manusear dados climáticos do Serviço Meteorológico Alemão (DWD - German Weather Service).
+O pacote `rdwd` foi criado com o intuito de manusear dados climáticos do Serviço Meteorológico Alemão (DWD - *German Weather Service*).
 
 O pacote nos permite: encontrar, selecionar, baixar e ler dados do DWD. Esses dados compreendem séries temporais observacionais de 6.000 registros de estações meteorológicas (com 2.500 ativas) com informações de: chuva, temperatura, vento, incidência solar, pressão, nebulosidade, umidade, neve, etc.
 
 ```{r rdwd, documentação: https://bookdown.org/brry/rdwd/}
 help("rdwd")
 ls("package:rdwd")
+```
 
+#### Funções do rdwd
+
+Entendendo as funções do pacote `rdwd`.
+
+```{r Utilizando o pacote rdwd e suas funções}
 # selecionando um dataset
 link <- selectDWD("Potsdam", res="daily", var="kl", per="recent")
 
@@ -122,10 +126,6 @@ View(clim)
 # renomeando as colunas para português
 names(clim) <- c("ID_estac", "Nome_estac", "Long", "Lat", "altura_estac", "altura_barometrica", "data_de", "data_ate", "tipo_dispositivo", "metodo_medicao", "ou", "x")
 ```
-
-#### Funções do rdwd
-
-Entendendo as funções do pacote `rdwd`.
 
 ##### selectDWD()
 
@@ -165,27 +165,45 @@ Sobre os argumentos:
 > >
 > > Por default `varnames` é definido para `FALSE`.
 
-[OBS.: Se esta etapa der erro, é possível extrair o arquivo utilizando outras funções, como no exemplo de código acima na sessão "Intro ao rdwd".]{style="color:red"}
+OBS.: Se esta etapa der [erro]{style="color:red"}, é possível extrair o arquivo utilizando outras funções, como no exemplo de código acima.
 
 ### Pacote darksky
 
-```{r darksky, documentacao: https://github.com/hrbrmstr/darksky}
-# requere tidyverse
-install.packages("tidyverse")
-library("tidyverse")
+Documentação: [github](https://github.com/hrbrmstr/darksky), [website](https://darksky.net/dev/docs).
 
-help("darksky")
-ls("darksky") # a lista de comandos não funciona com esse pacote
+[NOTA]{style="color:red"}: o pacote `darksky` será encerrado em março de 2023.
 
-now <- get_current_forecast(43.2672, -70.8617) # pede para inserir API key
-darksky_api_key() # precisa criar um arquivo .Renviron
+```{r Instalação e Importação do darksky}
+install.packages("darksky")
+library("darksky")
 ```
 
 ### Pacote RNCEP
 
+#### Intro ao RNCEP
+
+O pacote `RNCEP` recolhe, organiza e visualiza dados meteorológicos do [*NCEP*](https://www.weather.gov/ncep/)*/[NCAR](Uhttps://www.ucar.edu/)[Reanalysis](https://psl.noaa.gov/data/reanalysis/reanalysis.shtml)* ou [*NCEP/DOE Reanalysis II datasets*](https://www.cpc.ncep.noaa.gov/products/wesley/reanalysis2/index.html#:~:text=The%20NCEP%2FDOE%20AMIP-II%20Reanalysis%20%28Reanalysis-2%29%20is%20based%20on,by%20updating%20the%20parameterizations%20of%20the%20physical%20processes.).
+
+Este pacote contém funções para:
+
+1.  **Consultar** dados desses dois conjuntos de dados do NCEP para um intervalo especificado de espaço e tempo, mantendo a estrutura espacial e temporal dos dados
+2.  **Remover** quaisquer intervalos de tempo indesejados dos dados retornados
+3.  **Agregar** temporariamente os dados e aplicar qualquer função aos subconjuntos (ou seja, calcular variáveis ​​climáticas definidas pelo usuário)
+4.  **Criar** um mapa de contorno a partir dos dados
+5.  **Consultar** dados desses dois conjuntos de dados do NCEP interpolados para um ponto específico no tempo e no espaço
+6.  **Visualizar** esses dados interpolados como pontos em um mapa usando cores para representar o valor interpolado
+7.  **Realizar** simulações de trajetória de acordo com o comportamento especificado usando dados de vento do NCEP ou dados especificados pelo usuário.
+
 ```{r RNCEP, documentacao: https://github.com/cran/RNCEP}
 help("RNCEP")
 ls("package:RNCEP")
+```
+
+O pacote possui 29 funções diferentes, vamos abordar em seguida as mais relevantes.
+
+#### Funções do RNCEP
+
+```{r Utilizando o pacote RNCEP e suas funções}
 
 # Função NCEP.gather() -nesse caso pegamos a temperatura numa pressão específica
 airtemp_press <- NCEP.gather(variable = "air", level=850,
@@ -197,6 +215,8 @@ View(airtemp_press)  # visualizando o dado importado
 mode(airtemp_press)   # entendendo o dado importado (numeric)
 class(airtemp_press)  # entendendo o dado importado (array)
 ```
+
+##### NCEP.gather()
 
 ### Pacote rwunderground
 
