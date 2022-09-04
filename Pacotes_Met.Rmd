@@ -120,11 +120,52 @@ str(clim)
 View(clim)
 
 # renomeando as colunas para português
-# c("ID_estac", "Nome_estac", "Long", "Lat", "altura_estac", "altura_barometrica", "data_de", "data_ate", "tipo_dispositivo", "metodo_medicao", "ou", "x")
+names(clim) <- c("ID_estac", "Nome_estac", "Long", "Lat", "altura_estac", "altura_barometrica", "data_de", "data_ate", "tipo_dispositivo", "metodo_medicao", "ou", "x")
 ```
 
-```{")}
-```
+#### Funções do rdwd
+
+Entendendo as funções do pacote `rdwd`.
+
+##### selectDWD()
+
+`selectDWD()` seleciona os arquivos de dados para em seguida serem baixados com `dataDWD()`. A estrutura resumida da função `selectDWD()` é: `selectDWD(name="", res=NA, var=NA, per=NA)`.
+
+Sobre os argumentos:
+
+> `name` \<- nome da estação
+>
+> `res` \<- resolução temporal (ex.: de hora em hora - `hourly`, diário - `daily`, mensal - `monthly`)
+>
+> `var` \<- variável meteorológica de interesse (ex.: temperatura do ar - `air_temperature`, nebulosidade - `cloudiness`, precipitação - `precipitation`, etc)
+>
+> `per` \<- período temporal desejado (ex.: recente - `recent` (últimos 1.5 anos atualizados) ou histórico - `historical` (série temporal longa))
+>
+> > OBS. 1: As pastas com as informações disponíveis de `res`/`var`/`per` estão listadas [aqui](https://bookdown.org/brry/rdwd/available-datasets.html).
+> >
+> > OBS. 2: os argumentos `name`/`id` e `res`/`var`/`per` podem ser vetores.
+
+##### dataDWD()
+
+`dataDWD()` baixa, a partir do link url fornecido, o conjunto de dados desejado no diretório. A estrutura de `dataDWD()` é: `dataDWD(url, read = TRUE)`.
+
+> Sobre o argumento `read`.
+>
+> > Se `read=TRUE` a função lê os arquivos. Se `read=FALSE` o arquivo é apenas baixado. O default é `TRUE`.
+
+##### readDWD()
+
+`readDWD()` lê dados meteorológicos que foram baixados por `dataDWD()`. Os dados são extraídos do arquivo zip e, em seguida, são lidos, processados e retornados em formato `data.frame` / objeto raster. A estrutura de `readDWD()` é: `readDWD(file, varnames = FALSE`.
+
+> Sobre o argumento `varnames`.
+>
+> > `varnames` é um vetor lógico, que responde à pergunta "adicionar uma breve descrição às abreviações das variáveis ​​DWD nos nomes das colunas?".
+> >
+> > > Se definido para `TRUE`, por exemplo: mudar `FX`, `TNK` para `FX.Windspitze`, `TNK.Lufttemperatur_Min`.
+> >
+> > Por default `varnames` é definido para `FALSE`.
+
+[OBS.: Se esta etapa der erro, é possível extrair o arquivo utilizando outras funções, como no exemplo de código acima na sessão "Intro ao rdwd".]{style="color:red"}
 
 ### Pacote darksky
 
@@ -162,7 +203,6 @@ class(airtemp_press)  # entendendo o dado importado (array)
 ```{r rwunderground, documentacao: https://github.com/ALShum/rwunderground}
 help("rwunderground") # não encontra nenhum item
 ls("rwunderground")   # não encontra nenhum item
-
 
 ```
 
