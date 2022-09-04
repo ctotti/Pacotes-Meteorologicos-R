@@ -68,22 +68,62 @@ O `rNOMADS` possui um total de 22 funções, porém as principais são: `GetDODS
 
 A estrutura do `GetDODSDates`é a seguinte: `GetDODSDates(abbrev, request.sleep=1)`.
 
+> O argumento `abbrev` é um modelo de abreviação especificado pelo `NOMADSRealTimeList` ou pelo `NOMADSArchiveList`.
+>
+> > O `NOMADSArchiveList` gera uma lista de ebreviações, nomes e URLs para os modelos NOMADS arquivados no website NCDC.
+> >
+> > O `NOMADSRealTimeList` escaneia o website NOMADS Real Time para gerar uma lista dos produtos modelo disponíveis.
+> >
+> > > A estrutura de `NOMADSRealTimeList` é: `NOMADSRealTimeList(url.type, abbrev = NULL)`.
+> > >
+> > > > O argumento `url.type` determina se deve retornar um URL para extrair arquivos `grib` ou para obter dados de formato ascii diretamente do servidor `dods`.
+
+[OBS.: Está dando erro.]{style="color:red"}
+
 ```{r Funções rNOMADS}
-Get
+NOMADSArchiveList()
+NOMADSRealTimeList("dods")
+
+GetDODSDates("gfs_0p25")  # message error: The specified URL does not exist!  Make sure your model information is correct.  It is also possible the NOMADS server is down.
+                          # Details:  Attempted to access https://nomads.ncep.noaa.gov:443/dods/gfs_0p50/ but did not succeed...
+
+GetDODSModelRuns()
 
 ```
 
 ### Pacote rdwd
 
-```{r rdwd, documentação: https://github.com/brry/rdwd}
+#### Intro ao rdwd
+
+O pacote `rdwd` foi criado com o intuito de manusear dados climáticos do Serviço Meteorológico Alemão (DWD - German Weather Service).
+
+O pacote nos permite: encontrar, selecionar, baixar e ler dados do DWD. Esses dados compreendem séries temporais observacionais de 6.000 registros de estações meteorológicas (com 2.500 ativas) com informações de: chuva, temperatura, vento, incidência solar, pressão, nebulosidade, umidade, neve, etc.
+
+```{r rdwd, documentação: https://bookdown.org/brry/rdwd/}
 help("rdwd")
 ls("package:rdwd")
 
 # selecionando um dataset
-endereco <- selectDWD("Potsdam", res = "daily", var = "precipitation", per = "recent")
+link <- selectDWD("Potsdam", res="daily", var="kl", per="recent")
 
-# baixando o dataset
-folder <- dataDWD(endereco, read = FALSE)  # deu erro (The following folder does not exist:  '')
+# baixando o dataset em um arquivo zip
+file <- dataDWD(link, read=FALSE)
+
+# lendo o arquivo zip baixado | dá erro: system command 'unzip' could not be found
+clim <- readDWD(file, varnames=TRUE)
+
+# extraí o arquivo manualmente e agora vou importar
+clim <- read.csv2("DWDdata/daily_kl_recent_tageswerte_KL_03987_akt/Metadaten_Geraete_Luftdruck_Stationshoehe_03987.txt")
+
+# examinando o arquivo
+str(clim)
+View(clim)
+
+# renomeando as colunas para português
+# c("ID_estac", "Nome_estac", "Long", "Lat", "altura_estac", "altura_barometrica", "data_de", "data_ate", "tipo_dispositivo", "metodo_medicao", "ou", "x")
+```
+
+```{")}
 ```
 
 ### Pacote darksky
