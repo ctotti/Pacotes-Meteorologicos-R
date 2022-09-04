@@ -1,0 +1,232 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Sobre
+
+Este documento possui a finalidade de servir como uma espécie de dicionário ou guia introdutório para alguns dos pacotes disponíveis no R voltados para processamento de dados meteorológicos.
+
+### Instalação e importação dos pacotes
+
+1.  Instalação
+
+```{r INSTALANDO PACOTES}
+install.packages("rNOMADS")
+install.packages("rdwd")
+install.packages("weathercan")
+install.packages("weatherData")
+install.packages("RNCEP")
+install.packages("rwunderground")
+install.packages("riem")
+install.packages("SkyWiseDataTransferR")
+```
+
+2.  Importação
+
+```{r BAIXANDO BIBLIOTECAS}
+library("rNOMADS")
+library("rdwd")
+library("RNCEP")
+library("rwunderground")
+library("riem")
+library("weathercan") # não instalou
+library("weatherData") # não instalou
+library("SkyWiseDataTransferR") # não instalou
+```
+
+### Pacote rNOMADS
+
+#### Intro ao rNOMADS
+
+O pacote `rNOMADS` é uma interface destinada ao download automático de dados de previsão do tempo do *National Oceanic and Atmospheric Administration's Operational Model Archive and Distribution System* (NOMADS) no R.
+
+> O pacote permite fazer isso de 2 formas:
+>
+> > 1.  Lendo dados ascii diretamente do servidor usando o sistema DODS-GrAD
+>
+> > 2.  Fazendo o download de arquivos binários no formato GRIB1 ou GRIB2
+
+> O recurso `grib` do `rNOMADS` usa uma série externa de rotinas chamadas `wgrib2` para ler os dados do modelo operacional. Obtenha `wgrib2` em: <http://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/>.
+
+> O pacote também tentará chamar outra rotina externa chamada `wgrib` se o usuário desejar ler arquivos GRIB1. Obtenha `wgrib` em <http://www.cpc.ncep.noaa.gov/products/wesley/wgrib.html>.
+
+```{r rNOMADS}
+help("rNOMADS")
+ls("package:rNOMADS")
+```
+
+#### Funções do rNOMADS
+
+O `rNOMADS` possui um total de 22 funções, porém as principais são: `GetDODSDates`, `GetDODSModelRuns`, `DODSGrabs`.
+
+1.  `GetDODSDates` verifica o servidor de dados do GrADS para ver quais datas e subconjuntos de modelos estão disponíveis para o modelo especificado pelo argumento `abbrev`.
+
+A estrutura do `GetDODSDates`é a seguinte: `GetDODSDates(abbrev, request.sleep=1)`.
+
+> O argumento `abbrev` é um modelo de abreviação especificado pelo `NOMADSRealTimeList` ou pelo `NOMADSArchiveList`.
+>
+> > O `NOMADSArchiveList` gera uma lista de ebreviações, nomes e URLs para os modelos NOMADS arquivados no website NCDC.
+> >
+> > O `NOMADSRealTimeList` escaneia o website NOMADS Real Time para gerar uma lista dos produtos modelo disponíveis.
+> >
+> > > A estrutura de `NOMADSRealTimeList` é: `NOMADSRealTimeList(url.type, abbrev = NULL)`.
+> > >
+> > > > O argumento `url.type` determina se deve retornar um URL para extrair arquivos `grib` ou para obter dados de formato ascii diretamente do servidor `dods`.
+
+[OBS.: Está dando erro.]{style="color:red"}
+
+```{r Funções rNOMADS}
+NOMADSArchiveList()
+NOMADSRealTimeList("dods")
+
+GetDODSDates("gfs_0p25")  # message error: The specified URL does not exist!  Make sure your model information is correct.  It is also possible the NOMADS server is down.
+                          # Details:  Attempted to access https://nomads.ncep.noaa.gov:443/dods/gfs_0p50/ but did not succeed...
+
+GetDODSModelRuns()
+
+```
+
+### Pacote rdwd
+
+#### Intro ao rdwd
+
+O pacote `rdwd` foi criado com o intuito de manusear dados climáticos do Serviço Meteorológico Alemão (DWD - *German Weather Service*).
+
+O pacote nos permite: encontrar, selecionar, baixar e ler dados do DWD. Esses dados compreendem séries temporais observacionais de 6.000 registros de estações meteorológicas (com 2.500 ativas) com informações de: chuva, temperatura, vento, incidência solar, pressão, nebulosidade, umidade, neve, etc.
+
+```{r rdwd, documentação: https://bookdown.org/brry/rdwd/}
+help("rdwd")
+ls("package:rdwd")
+```
+
+#### Funções do rdwd
+
+Entendendo as funções do pacote `rdwd`.
+
+```{r Utilizando o pacote rdwd e suas funções}
+# selecionando um dataset
+link <- selectDWD("Potsdam", res="daily", var="kl", per="recent")
+
+# baixando o dataset em um arquivo zip
+file <- dataDWD(link, read=FALSE)
+
+# lendo o arquivo zip baixado | dá erro: system command 'unzip' could not be found
+clim <- readDWD(file, varnames=TRUE)
+
+# extraí o arquivo manualmente e agora vou importar
+clim <- read.csv2("DWDdata/daily_kl_recent_tageswerte_KL_03987_akt/Metadaten_Geraete_Luftdruck_Stationshoehe_03987.txt")
+
+# examinando o arquivo
+str(clim)
+View(clim)
+
+# renomeando as colunas para português
+names(clim) <- c("ID_estac", "Nome_estac", "Long", "Lat", "altura_estac", "altura_barometrica", "data_de", "data_ate", "tipo_dispositivo", "metodo_medicao", "ou", "x")
+```
+
+##### selectDWD()
+
+`selectDWD()` seleciona os arquivos de dados para em seguida serem baixados com `dataDWD()`. A estrutura resumida da função `selectDWD()` é: `selectDWD(name="", res=NA, var=NA, per=NA)`.
+
+Sobre os argumentos:
+
+> `name` \<- nome da estação
+>
+> `res` \<- resolução temporal (ex.: de hora em hora - `hourly`, diário - `daily`, mensal - `monthly`)
+>
+> `var` \<- variável meteorológica de interesse (ex.: temperatura do ar - `air_temperature`, nebulosidade - `cloudiness`, precipitação - `precipitation`, etc)
+>
+> `per` \<- período temporal desejado (ex.: recente - `recent` (últimos 1.5 anos atualizados) ou histórico - `historical` (série temporal longa))
+>
+> > OBS. 1: As pastas com as informações disponíveis de `res`/`var`/`per` estão listadas [aqui](https://bookdown.org/brry/rdwd/available-datasets.html).
+> >
+> > OBS. 2: os argumentos `name`/`id` e `res`/`var`/`per` podem ser vetores.
+
+##### dataDWD()
+
+`dataDWD()` baixa, a partir do link url fornecido, o conjunto de dados desejado no diretório. A estrutura de `dataDWD()` é: `dataDWD(url, read = TRUE)`.
+
+> Sobre o argumento `read`.
+>
+> > Se `read=TRUE` a função lê os arquivos. Se `read=FALSE` o arquivo é apenas baixado. O default é `TRUE`.
+
+##### readDWD()
+
+`readDWD()` lê dados meteorológicos que foram baixados por `dataDWD()`. Os dados são extraídos do arquivo zip e, em seguida, são lidos, processados e retornados em formato `data.frame` / objeto raster. A estrutura de `readDWD()` é: `readDWD(file, varnames = FALSE`.
+
+> Sobre o argumento `varnames`.
+>
+> > `varnames` é um vetor lógico, que responde à pergunta "adicionar uma breve descrição às abreviações das variáveis ​​DWD nos nomes das colunas?".
+> >
+> > > Se definido para `TRUE`, por exemplo: mudar `FX`, `TNK` para `FX.Windspitze`, `TNK.Lufttemperatur_Min`.
+> >
+> > Por default `varnames` é definido para `FALSE`.
+
+OBS.: Se esta etapa der [erro]{style="color:red"}, é possível extrair o arquivo utilizando outras funções, como no exemplo de código acima.
+
+### Pacote darksky
+
+Documentação: [github](https://github.com/hrbrmstr/darksky), [website](https://darksky.net/dev/docs).
+
+[NOTA]{style="color:red"}: o pacote `darksky` será encerrado em março de 2023.
+
+```{r Instalação e Importação do darksky}
+install.packages("darksky")
+library("darksky")
+```
+
+### Pacote RNCEP
+
+#### Intro ao RNCEP
+
+O pacote `RNCEP` recolhe, organiza e visualiza dados meteorológicos do [*NCEP*](https://www.weather.gov/ncep/)*/[NCAR](Uhttps://www.ucar.edu/)[Reanalysis](https://psl.noaa.gov/data/reanalysis/reanalysis.shtml)* ou [*NCEP/DOE Reanalysis II datasets*](https://www.cpc.ncep.noaa.gov/products/wesley/reanalysis2/index.html#:~:text=The%20NCEP%2FDOE%20AMIP-II%20Reanalysis%20%28Reanalysis-2%29%20is%20based%20on,by%20updating%20the%20parameterizations%20of%20the%20physical%20processes.).
+
+Este pacote contém funções para:
+
+1.  **Consultar** dados desses dois conjuntos de dados do NCEP para um intervalo especificado de espaço e tempo, mantendo a estrutura espacial e temporal dos dados
+2.  **Remover** quaisquer intervalos de tempo indesejados dos dados retornados
+3.  **Agregar** temporariamente os dados e aplicar qualquer função aos subconjuntos (ou seja, calcular variáveis ​​climáticas definidas pelo usuário)
+4.  **Criar** um mapa de contorno a partir dos dados
+5.  **Consultar** dados desses dois conjuntos de dados do NCEP interpolados para um ponto específico no tempo e no espaço
+6.  **Visualizar** esses dados interpolados como pontos em um mapa usando cores para representar o valor interpolado
+7.  **Realizar** simulações de trajetória de acordo com o comportamento especificado usando dados de vento do NCEP ou dados especificados pelo usuário.
+
+```{r RNCEP, documentacao: https://github.com/cran/RNCEP}
+help("RNCEP")
+ls("package:RNCEP")
+```
+
+O pacote possui 29 funções diferentes, vamos abordar em seguida as mais relevantes.
+
+#### Funções do RNCEP
+
+```{r Utilizando o pacote RNCEP e suas funções}
+
+# Função NCEP.gather() -nesse caso pegamos a temperatura numa pressão específica
+airtemp_press <- NCEP.gather(variable = "air", level=850,
+    months.minmax=c(9,10), years.minmax=c(1996,1997),
+    lat.southnorth=c(50,55), lon.westeast=c(5,10),
+    reanalysis2 = FALSE, return.units = TRUE)
+
+View(airtemp_press)  # visualizando o dado importado
+mode(airtemp_press)   # entendendo o dado importado (numeric)
+class(airtemp_press)  # entendendo o dado importado (array)
+```
+
+##### NCEP.gather()
+
+### Pacote rwunderground
+
+```{r rwunderground, documentacao: https://github.com/ALShum/rwunderground}
+help("rwunderground") # não encontra nenhum item
+ls("rwunderground")   # não encontra nenhum item
+
+```
+
+### Pacote riem
+
+```{r riem, documentacao: https://github.com/ropensci/riem}
+help("riem")
+ls("riem")
+```
