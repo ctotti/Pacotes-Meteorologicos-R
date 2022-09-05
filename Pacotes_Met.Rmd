@@ -203,20 +203,57 @@ O pacote possui 29 funções diferentes, vamos abordar em seguida as mais releva
 
 #### Funções do RNCEP
 
-```{r Utilizando o pacote RNCEP e suas funções}
+##### NCEP.gather()
 
-# Função NCEP.gather() -nesse caso pegamos a temperatura numa pressão específica
-airtemp_press <- NCEP.gather(variable = "air", level=850,
-    months.minmax=c(9,10), years.minmax=c(1996,1997),
-    lat.southnorth=c(50,55), lon.westeast=c(5,10),
-    reanalysis2 = FALSE, return.units = TRUE)
+A função `NCEP.gather()` consulta dados meteorológicos do *NCEP/NCAR Reanalysis* ou do *NCEP/DOE Reanalysis II* para as extensões espaciais e temporais especificadas na chamada de função e mantém a estrutura espacial e temporal dos dados em um `array` 3D. A estrutura da função `NCEP.gather()` é:
+
+> `NCEP.gather(variable, level, months.minmax, years.minmax, lat.southnorth, lon.westeast, reanalysis2=FALSE, return.units=TRUE, status.bar=TRUE)`.
+
+A função `NCEP.gather()` é uma "wrapper function" que chama outras funções: `NCEP.gather.gaussian()`, `NCEP.gather.pressure()`, `NCEP.gather.surface()`. Deve ser evitado o uso direto dessas funções.
+
+Alguns dos argumentos da `NCEP.gather()` são:
+
+> `variable`\<- nome da variável meteorológica a ser obtida.
+>
+> `level` \<- informa-se o nível de pressão numérico ou um dos dois: gaussiano `gaussian` ou superfície `surface`.
+>
+> `months.minmax` \<- especifica o intervalo de meses a ser obtido de cada ano.
+>
+> `years.minmax` \<- especifica o intervalo de anos a ser obtido.
+>
+> `lat.southnorth` \<- Especifica o intervalo de latitudes a ser obtido na ordem `c(mais_ao_sul, mais_ao_norte)`.
+>
+> `lon.westeast` \<- Especifica o intervalo de longitudes a serem obtidas na ordem `c(mais_a_oeste, mais_a_leste)`.
+>
+> `reanalysis2` \<- argumento lógico, pergunta "Os dados devem ser obtidos do conjunto de dados Reanalysis I (padrão) ou da Reanalysis II?". A resposta padrão é `FALSE`, ou seja, Reanalysis I.
+>
+> `return.units` \<- argumento lógico, pergunta "As unidades da variável que está sendo obtida devem ser impressas após o término da consulta?". O default é `TRUE`.
+
+NOTA: Observe que os `dimnames` do array tridimensional de dados indicam AS latitudes, longitudes e data e hora dos dados `dimnames(wx.extent1)`.
+
+> Portanto, as latitudes, longitudes e datas podem ser chamadas com:
+>
+> > `dimnames(wx.extent1)[[1]]` (latitudes)
+> >
+> > `dimnames(wx.extent1)[[2]]` (longitudes)
+> >
+> > `dimnames(wx.extent1)[[3]]` (datetimes)
+
+```{r Função NCEP.gather() do pacote RNCEP - pressão}
+
+# Exemplo: consultamos a temperatura à um nível de pressão específico
+airtemp_press <- NCEP.gather(variable = "air", 
+                             level=850,
+                             months.minmax=c(9,10), 
+                             years.minmax=c(1996,1997),
+                             lat.southnorth=c(50,55), 
+                             lon.westeast=c(5,10),
+                             reanalysis2 = FALSE, 
+                             return.units = TRUE)
 
 View(airtemp_press)  # visualizando o dado importado
-mode(airtemp_press)   # entendendo o dado importado (numeric)
-class(airtemp_press)  # entendendo o dado importado (array)
+str(airtemp_press)   # array tridimensional 
 ```
-
-##### NCEP.gather()
 
 ### Pacote rwunderground
 
